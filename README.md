@@ -92,4 +92,107 @@ If you find this work useful, please consider citing:
   year={2025}
 }
 ```
+## How to Run - Addition
+
+Here are the full steps to run your training on TACC after removing the dataset preprocessing split modification step (step 7):
+
+***
+
+### 1. Connect to TACC via SSH
+
+```bash
+ssh romirpatel@vista.tacc.utexas.edu
+```
+
+***
+
+### 2. Create project folder inside scratch on TACC
+
+```bash
+mkdir -p /scratch/10936/romirpatel/d1_training
+```
+
+***
+
+### 3. Copy your local repo to TACC Scratch using SCP
+
+From your **local machine terminal**, run:
+
+```bash
+scp -r /Users/romirpatel/d1 romirpatel@vista.tacc.utexas.edu:/scratch/10936/romirpatel/d1_training/
+```
+
+This copies your entire `d1` folder to the scratch folder on TACC.
+
+***
+
+### 4. SSH back to TACC and navigate to your repo folder
+
+```bash
+ssh romirpatel@vista.tacc.utexas.edu
+cd /scratch/10936/romirpatel/d1_training/d1/SFT
+```
+
+***
+
+### 5. Setup Conda environment on TACC
+
+If you have not done so yet, create and activate your conda environment:
+
+```bash
+conda env create -f ../env.yml
+conda activate d1
+```
+
+***
+
+### 6. Set Hugging Face cache environment variables
+
+```bash
+export HF_HOME=$SCRATCH/huggingface_cache
+export HF_HUB_CACHE=$HF_HOME
+mkdir -p $HF_HOME
+```
+
+Caches will be stored on scratch to avoid permission issues and allow fast access.
+
+***
+
+### 7. Run your training
+
+Run the training script with your usual parameters, for example:
+
+```bash
+python sft_train.py \
+  --model_name GSAI-ML/LLaDA-8B-Instruct \
+  --batch_size 1 \
+  --max_length 2048 \
+  --num_epochs 1 \
+  --learning_rate 1e-5 \
+  --output_dir $SCRATCH/d1_training/output \
+  --job_name debug-run \
+  --train_data AI-MO/NuminaMath-LEAN \
+  --debugging
+```
+
+***
+
+### 8. Copy output to persistent storage after training finishes
+
+```bash
+cp -r $SCRATCH/d1_training/output /home1/10936/romirpatel/d1_outputs/
+```
+
+***
+
+### 9. Exit the session
+
+```bash
+exit
+```
+
+***
+
+
+
 
