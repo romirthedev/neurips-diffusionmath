@@ -101,21 +101,18 @@ class dLLMDataCollator(DefaultDataCollator):
 
 
 SYSTEM_PROMPT = """
-Respond in the following format:
-<reasoning>
-Your reasoning here
-</reasoning>
-<answer>
-...
-</answer>
+Solve the following mathematical problem. Provide a detailed formal proof and the final answer.
 """
 
 
 def preprocess_dataset(data, tokenizer, max_length, test_split=0.01):
     preprocessed_data = []
     for i in tqdm(range(len(data)), desc="Preprocessing dataset"):
-        question = SYSTEM_PROMPT + "\n\n" + data[i]["question"]
-        trajectory = f"<reasoning>{data[i]['thinking_trajectories'][0]}</reasoning>\n<answer>{data[i]['attempt']}</answer>"
+        question = SYSTEM_PROMPT + "\n\n" + data[i]["problem"]
+        # Check if 'formal_proof' and 'answer' keys exist before accessing them
+        formal_proof = data[i].get('formal_proof', '')
+        answer = data[i].get('answer', '')
+        trajectory = f"<formal_proof>{formal_proof}</formal_proof>\n<answer>{answer}</answer>"
         prompt = [{"role": "user", "content": question}]
         response = [{"role": "assistant", "content": trajectory}]
         inputs = tokenizer.apply_chat_template(prompt + response, tokenize=False)
@@ -133,6 +130,8 @@ def preprocess_dataset(data, tokenizer, max_length, test_split=0.01):
         )
 
     random.shuffle(preprocessed_data)
+    # Limit to 100 samples for training
+    preprocessed_data = preprocessed_data[:100]
     test_data = preprocessed_data[: int(len(preprocessed_data) * test_split)]
     train_data = preprocessed_data[int(len(preprocessed_data) * test_split) :]
     return train_data, test_data

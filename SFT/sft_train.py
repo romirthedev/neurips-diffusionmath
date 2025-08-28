@@ -42,7 +42,7 @@ def parse_args():
         help="Directory to save model checkpoints and logs",
     )
     parser.add_argument("--job_name", type=str, default="llada-s1", help="Job Name")
-    parser.add_argument("--train_data", type=str, default="simplescaling/s1K", help="Path to training data")
+    parser.add_argument("--train_data", type=str, default="AI-MO/NuminaMath-LEAN", help="Path to training data")
     parser.add_argument(
         "--debugging", action="store_true", help="Use while debugging model - only disables wandb logging"
     )
