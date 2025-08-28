@@ -124,7 +124,21 @@ scp -r /Users/romirpatel/d1 romirpatel@vista.tacc.utexas.edu:/scratch/10936/romi
 
 This copies your entire `d1` folder to the scratch folder on TACC.
 
-***
+**
+Run this if expected 4 unpack error within d1 **
+
+'''bash
+$CONDA_PREFIX/bin/python -m pip uninstall bitsandbytes -y
+$CONDA_PREFIX/bin/python -m pip install bitsandbytes --no-cache-dir
+'''
+
+
+
+
+
+
+
+
 
 ### 4. SSH back to TACC and navigate to your repo folder
 
